@@ -11,7 +11,7 @@ public class Analysis : Entity
 {
   public int TradeId { get; private set; }
   public Trade Trade { get; } = null!;
-  public int? strategyId { get; private set; }
+  public int? StrategyId { get; private set; }
   public Strategy? Strategy { get; private set; }
   public string Notes { get; private set; }
 
