@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using TradeJournal.Domain.Aggregates.JournalAggregate;
+using TradeJournal.Infrastructure.Idempotency;
 
 namespace TradeJournal.API.Application.Commands.JournalCommands;
 
@@ -22,5 +23,19 @@ public class CreateJournalCommandHandler : IRequestHandler<CreateJournalCommand,
 
     _journalRepository.Add(journal);
     return await _journalRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
+  }
+}
+
+public class CreateJournalIdentifiedCommandHandler : IdentifiedCommandHandler<CreateJournalCommand, bool>
+{
+  public CreateJournalIdentifiedCommandHandler(
+    IMediator mediator,
+    IRequestManager requestManager,
+    ILogger<IdentifiedCommandHandler<CreateJournalCommand, bool>> logger)
+      : base(mediator, requestManager, logger) { }
+
+  protected override bool CreateResultForDuplicateRequest()
+  {
+    return true;
   }
 }

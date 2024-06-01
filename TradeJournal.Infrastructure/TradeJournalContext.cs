@@ -4,6 +4,7 @@ using TradeJournal.Domain.Aggregates.JournalAggregate;
 using TradeJournal.Domain.Aggregates.TradeAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
+using TradeJournal.Infrastructure.EntityConfigurations;
 
 namespace TradeJournal.Infrastructure;
 
@@ -33,6 +34,11 @@ public class TradeJournalContext : DbContext, IUnitOfWork
   public TradeJournalContext(DbContextOptions<TradeJournalContext> options, IMediator mediator) : base(options)
   {
     _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+  }
+
+  protected override void OnModelCreating(ModelBuilder modelBuilder)
+  {
+    modelBuilder.ApplyConfiguration(new ClientRequestEntityTypeConfiguration());
   }
 
   public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)

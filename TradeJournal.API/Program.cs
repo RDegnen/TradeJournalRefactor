@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TradeJournal.Domain.Aggregates.JournalAggregate;
+using TradeJournal.Domain.Aggregates.TradeAggregate;
 using TradeJournal.Infrastructure;
+using TradeJournal.Infrastructure.Idempotency;
 using TradeJournal.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +16,13 @@ builder.Services.AddDbContext<TradeJournalContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IJournalRepository, JournalRepository>(); 
+builder.Services.AddScoped<IJournalRepository, JournalRepository>();
+builder.Services.AddScoped<ITradeRepository, TradeRepository>();
+builder.Services.AddScoped<IRequestManager, RequestManager>();
+builder.Services.AddMediatR(cfg =>
+{
+  cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+});
 
 var app = builder.Build();
 
@@ -32,3 +40,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
