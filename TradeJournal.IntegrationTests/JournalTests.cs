@@ -13,11 +13,11 @@ public class JournalTests : IClassFixture<TradeJournalApiFixture<Program>>
   private readonly TradeJournalApiFixture<Program> _factory;
   private readonly ITestOutputHelper _outputHelper;
 
-  public JournalTests(TradeJournalApiFixture<Program> factory, ITestOutputHelper output)
+  public JournalTests(TradeJournalApiFixture<Program> factory, ITestOutputHelper outputHelper)
   {
     _factory = factory;
     _httpClient = factory.CreateClient();
-    _outputHelper = output;
+    _outputHelper = outputHelper;
   }
 
   [Fact]
@@ -30,8 +30,22 @@ public class JournalTests : IClassFixture<TradeJournalApiFixture<Program>>
     };
     var response = await _httpClient.PostAsync("api/journals", content);
     var body = await response.Content.ReadAsStringAsync();
-    _outputHelper.WriteLine(body);
 
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    Assert.Equal("1", body);
+  }
+
+  [Fact]
+  public async Task AddNewJournalWithoutRequestId()
+  {
+    var createJournalRequest = new CreateJournalRequest("Test", "A test journal");
+    var content = new StringContent(JsonSerializer.Serialize(createJournalRequest), UTF8Encoding.UTF8, "application/json")
+    {
+      Headers = { { "x-requestid", Guid.Empty.ToString() } }
+    };
+    var response = await _httpClient.PostAsync("api/journals", content);
+    await response.Content.ReadAsStringAsync();
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
   }
 }

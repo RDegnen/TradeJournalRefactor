@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace TradeJournal.API.Application.Commands.JournalCommands;
 
 [DataContract]
-public class CreateJournalCommand : IRequest<bool>
+public class CreateJournalCommand : IRequest<int>
 {
   [DataMember]
   public string Name { get; private set; }

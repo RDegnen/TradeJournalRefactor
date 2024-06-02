@@ -23,30 +23,27 @@ public class JournalsController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<Results<Ok, BadRequest<string>>> CreateJournal(
+  public async Task<ActionResult<int>> CreateJournal(
     [FromHeader(Name = "x-requestid")] Guid requestId,
     CreateJournalRequest request)
   {
     if (requestId == Guid.Empty)
     {
       _logger.LogWarning("Invalid request - requestId is missing - {@Request}", request);
-      return TypedResults.BadRequest("requestId is missing");
+      return BadRequest("requestId is missing");
     }
 
-    var command = new CreateJournalCommand(request.Name, request.Description);
-    var identifiedCommand = new IdentifiedCommand<CreateJournalCommand, bool>(command, requestId);
-    var result = await _mediator.Send(identifiedCommand);
-
-    if (result)
+    try
     {
-      _logger.LogInformation("CreateJournalCommand succeeded");
+      var command = new CreateJournalCommand(request.Name, request.Description);
+      var identifiedCommand = new IdentifiedCommand<CreateJournalCommand, int>(command, requestId);
+      var journalId = await _mediator.Send(identifiedCommand);
+      return Ok(journalId);
     }
-    else
+    catch (Exception ex) 
     {
-      _logger.LogWarning("CreateJournalCommand failed");
+      return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
     }
-
-    return TypedResults.Ok();
   }
 }
 

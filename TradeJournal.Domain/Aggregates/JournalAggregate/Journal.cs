@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeJournal.Domain.Aggregates.TradeAggregate;
+﻿using TradeJournal.Domain.Aggregates.TradeAggregate;
 using TradeJournal.Domain.SeedWork;
 
 namespace TradeJournal.Domain.Aggregates.JournalAggregate;
