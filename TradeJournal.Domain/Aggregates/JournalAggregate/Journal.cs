@@ -21,4 +21,9 @@ public class Journal : Entity, IAggregateRoot
     _trades = new List<Trade>();
     _journalTags = new List<JournalTag>();
   }
+
+  public void AddAccount(Account account)
+  {
+    Account = account;
+  }
 }

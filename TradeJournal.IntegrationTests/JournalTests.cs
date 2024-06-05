@@ -20,19 +20,23 @@ public class JournalTests : IClassFixture<TradeJournalApiFixture<Program>>
     _outputHelper = outputHelper;
   }
 
-  [Fact]
-  public async Task AddNewJournal()
+  private async Task<(string, HttpResponseMessage)> _createJournal()
   {
     var createJournalRequest = new CreateJournalRequest("Test", "A test journal");
     var content = new StringContent(JsonSerializer.Serialize(createJournalRequest), UTF8Encoding.UTF8, "application/json")
-    { 
+    {
       Headers = { { "x-requestid", Guid.NewGuid().ToString() } }
     };
     var response = await _httpClient.PostAsync("api/journals", content);
     var body = await response.Content.ReadAsStringAsync();
+    return (body, response);
+  }
 
-    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    Assert.Equal("1", body);
+  [Fact]
+  public async Task AddNewJournal()
+  {
+    var createJournalResponse = await _createJournal();
+    Assert.Equal(HttpStatusCode.OK, createJournalResponse.Item2.StatusCode);
   }
 
   [Fact]
@@ -47,5 +51,20 @@ public class JournalTests : IClassFixture<TradeJournalApiFixture<Program>>
     await response.Content.ReadAsStringAsync();
 
     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task AddNewAccount()
+  {
+    var createResponse = await _createJournal();
+    var createAccountRequest = new CreateAccountRequest(Int32.Parse(createResponse.Item1), 50000.00);
+    var content = new StringContent(JsonSerializer.Serialize(createAccountRequest), UTF8Encoding.UTF8, "application/json")
+    {
+      Headers = { { "x-requestid", Guid.NewGuid().ToString() } }
+    };
+    var response = await _httpClient.PostAsync("api/journals/account", content);
+    await response.Content.ReadAsStringAsync();
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
   }
 }

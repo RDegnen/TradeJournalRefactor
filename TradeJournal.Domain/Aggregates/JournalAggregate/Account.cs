@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeJournal.Domain.SeedWork;
+﻿using TradeJournal.Domain.SeedWork;
 
 namespace TradeJournal.Domain.Aggregates.JournalAggregate;
 
@@ -15,8 +10,9 @@ public class Account : Entity
   public int JournalId { get; private set; }
   public Journal Journal { get; } = null!;
 
-  public Account(double balance)
+  public Account(int journalId, double balance)
   {
+    JournalId = journalId;
     Balance = balance;
     RealizedPnL = 0;
   }

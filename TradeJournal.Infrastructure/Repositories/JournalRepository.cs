@@ -17,4 +17,9 @@ public class JournalRepository : IJournalRepository
   {
     return _context.Journals.Add(journal).Entity;
   }
+
+  public Account AddAccount(Account account)
+  {
+    return _context.Accounts.Add(account).Entity;
+  }
 }

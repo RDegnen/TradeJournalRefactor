@@ -1,6 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TradeJournal.API.Application.Commands;
 using TradeJournal.API.Application.Commands.JournalCommands;
@@ -16,7 +14,7 @@ public class JournalsController : ControllerBase
 
   public JournalsController(
     IMediator mediator,
-    ILogger<JournalsController> logger) 
+    ILogger<JournalsController> logger)
   {
     _mediator = mediator;
     _logger = logger;
@@ -40,7 +38,31 @@ public class JournalsController : ControllerBase
       var journalId = await _mediator.Send(identifiedCommand);
       return Ok(journalId);
     }
-    catch (Exception ex) 
+    catch (Exception ex)
+    {
+      return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
+    }
+  }
+
+  [HttpPost("account")]
+  public async Task<ActionResult<int>> CreateAccount(
+    [FromHeader(Name = "x-requestid")] Guid requestId,
+    CreateAccountRequest request)
+  {
+    if (requestId == Guid.Empty)
+    {
+      _logger.LogWarning("Invalid request - requestId is missing - {@Request}", request);
+      return BadRequest("requestId is missing");
+    }
+
+    try
+    {
+      var command = new CreateAccountCommand(request.JournalId, request.Balance);
+      var identifiedCommand = new IdentifiedCommand<CreateAccountCommand, int>(command, requestId);
+      var accountId = await _mediator.Send(identifiedCommand);
+      return Ok(accountId);
+    }
+    catch (Exception ex)
     {
       return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
     }
@@ -48,3 +70,5 @@ public class JournalsController : ControllerBase
 }
 
 public record CreateJournalRequest(string Name, string Description);
+
+public record CreateAccountRequest(int JournalId, double Balance);

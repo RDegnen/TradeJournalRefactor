@@ -9,7 +9,9 @@ public class CreateJournalCommandHandler : IRequestHandler<CreateJournalCommand,
   private readonly IJournalRepository _journalRepository;
   private readonly ILogger<CreateJournalCommandHandler> _logger;
 
-  public CreateJournalCommandHandler(IJournalRepository journalRepository, ILogger<CreateJournalCommandHandler> logger)
+  public CreateJournalCommandHandler(
+    IJournalRepository journalRepository, 
+    ILogger<CreateJournalCommandHandler> logger)
   {
     _journalRepository = journalRepository;
     _logger = logger;
