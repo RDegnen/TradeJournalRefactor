@@ -12,7 +12,7 @@ public class TradeJournalContext : DbContext, IUnitOfWork
 {
   // Journal Aggregate
   public DbSet<Journal> Journals { get; set; }
-  public DbSet<JournalTag> Tags { get; set; }
+  public DbSet<JournalTag> JournalTags { get; set; }
   public DbSet<Account> Accounts { get; set; }
   // Trade Aggregate
   public DbSet<Trade> Trades { get; set; }

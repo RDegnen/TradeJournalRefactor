@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TradeJournal.API.Application.Queries;
 using TradeJournal.Domain.Aggregates.JournalAggregate;
 using TradeJournal.Domain.Aggregates.TradeAggregate;
 using TradeJournal.Infrastructure;
@@ -23,6 +24,7 @@ builder.Services.AddMediatR(cfg =>
 {
   cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
 });
+builder.Services.AddScoped<IJournalQueries, JournalQueries>();
 
 var app = builder.Build();
 

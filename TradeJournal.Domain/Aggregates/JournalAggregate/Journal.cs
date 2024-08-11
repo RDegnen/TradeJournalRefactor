@@ -26,4 +26,9 @@ public class Journal : Entity, IAggregateRoot
   {
     Account = account;
   }
+
+  public void AddTag(JournalTag tag) 
+  {
+    _journalTags.Add(tag);
+  }
 }

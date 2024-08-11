@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeJournal.Domain.SeedWork;
+﻿using TradeJournal.Domain.SeedWork;
 
 namespace TradeJournal.Domain.Aggregates.JournalAggregate;
 
@@ -18,5 +13,10 @@ public class JournalTag : Entity
   {
     Name = name;
     _journals = new List<Journal>();
+  }
+
+  public void AddJournal(Journal journal)
+  {
+    _journals.Add(journal);
   }
 }
