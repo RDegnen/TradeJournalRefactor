@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeJournal.Domain.Aggregates.JournalAggregate;
+﻿using TradeJournal.Domain.Aggregates.JournalAggregate;
 using TradeJournal.Domain.SeedWork;
 
 namespace TradeJournal.Domain.Aggregates.TradeAggregate;
@@ -17,11 +12,11 @@ public class Trade : Entity, IAggregateRoot
   public double EntryPrice { get; private set; }
   public double? StopLoss { get; private set; }
   public double? TrailingStopLoss { get; private set; }
-  public double? TakeProfit {  get; private set; }
+  public double? TakeProfit { get; private set; }
   public DateTime? ExitTime { get; private set; }
   public double? ExitPrice { get; private set; }
   public double? ProfitOrLoss { get; private set; }
-  public double? Risk {  get; private set; }
+  public double? Risk { get; private set; }
   public TimeSpan? Duration { get; private set; }
 
   public int JournalId { get; private set; }
@@ -46,5 +41,26 @@ public class Trade : Entity, IAggregateRoot
     EntryTime = entryTime;
     EntryPrice = entryPrice;
     _images = new List<Image>();
+  }
+
+  public void UpdateTrade(
+    double? stopLoss,
+    double? trailingStopLoss,
+    double? takeProfit,
+    DateTime? exitTime,
+    double? exitPrice,
+    double? profitOrLoss,
+    double? risk,
+    TimeSpan? duration
+  )
+  {
+    StopLoss = stopLoss;
+    TrailingStopLoss = trailingStopLoss;
+    TakeProfit = takeProfit;
+    ExitTime = exitTime;
+    ExitPrice = exitPrice;
+    ProfitOrLoss = profitOrLoss;
+    Risk = risk;
+    Duration = duration;
   }
 }

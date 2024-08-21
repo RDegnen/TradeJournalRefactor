@@ -18,10 +18,22 @@ public class Analysis : Entity
   private readonly List<AnalysisTag> _analysisTags;
   public IReadOnlyCollection<AnalysisTag> AnalysisTags => _analysisTags.AsReadOnly();
 
-  public Analysis(int tradeId, string  notes)
+  public Analysis(int tradeId, string notes)
   {
     TradeId = tradeId;
     Notes = notes;
     _analysisTags = new List<AnalysisTag>();
+  }
+
+  public void UpdateAnalysis(int? strategyId, string? notes)
+  {
+    if (strategyId.HasValue)
+    {
+      StrategyId = strategyId.Value;
+    }
+    if (!string.IsNullOrWhiteSpace(notes))
+    {
+      Notes = notes;
+    }
   }
 }
