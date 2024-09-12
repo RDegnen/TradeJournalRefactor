@@ -25,7 +25,13 @@ public class CreateAnalysisCommandHandler : IRequestHandler<CreateAnalysisComman
 
     if (command.StrategyId.HasValue)
     {
-      Analysis.UpdateAnalysis(command.StrategyId.Value, null);
+      var strategy = await _tradeRepository.GetStrategyByIdAsync(command.StrategyId.Value);
+      if (strategy is null)
+      {
+        _logger.LogWarning("CreateAnalysisCommand failed - Strategy not found");
+        throw new NotFoundError($"Strategy with id {command.StrategyId} not found");
+      }
+      Analysis.UpdateStrategy(command.StrategyId.Value, strategy);
     }
 
     _logger.LogInformation("Creating Analysis - Analysis {@Analysis}", Analysis);

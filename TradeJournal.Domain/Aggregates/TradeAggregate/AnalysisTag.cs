@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeJournal.Domain.SeedWork;
+﻿using TradeJournal.Domain.SeedWork;
 
 namespace TradeJournal.Domain.Aggregates.TradeAggregate;
 
@@ -18,5 +13,15 @@ public class AnalysisTag : Entity
   {
     Name = name;
     _analysis = new List<Analysis>();
+  }
+
+  public void UpdateAnalysisList(List<Analysis> analysisList)
+  {
+    if (analysisList is null)
+    {
+      throw new ArgumentNullException(nameof(analysisList));
+    }
+    _analysis.Clear();
+    _analysis.AddRange(analysisList);
   }
 }

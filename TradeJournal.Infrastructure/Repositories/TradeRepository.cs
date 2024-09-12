@@ -32,4 +32,19 @@ public class TradeRepository : ITradeRepository
   {
     return _context.Analysis.Add(analysis).Entity;
   }
+
+  public AnalysisTag AddAnalysisTag(AnalysisTag analysisTag)
+  {
+    return _context.AnalysisTags.Add(analysisTag).Entity;
+  }
+
+  public Strategy AddStrategy(Strategy strategy)
+  {
+    return _context.Strategies.Add(strategy).Entity;
+  }
+
+  public async Task<Strategy?> GetStrategyByIdAsync(int strategyId)
+  {
+    return await _context.Strategies.FindAsync(strategyId);
+  }
 }

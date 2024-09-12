@@ -27,6 +27,7 @@ public class Journal : Entity, IAggregateRoot
     Account = account;
   }
 
+  // TODO refactor this to update the whole list like in Trade Analysis
   public void AddTag(JournalTag tag) 
   {
     _journalTags.Add(tag);

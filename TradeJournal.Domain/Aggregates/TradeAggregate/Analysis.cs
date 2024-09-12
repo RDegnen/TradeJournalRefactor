@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TradeJournal.Domain.SeedWork;
+﻿using TradeJournal.Domain.SeedWork;
 
 namespace TradeJournal.Domain.Aggregates.TradeAggregate;
 
@@ -25,15 +20,24 @@ public class Analysis : Entity
     _analysisTags = new List<AnalysisTag>();
   }
 
-  public void UpdateAnalysis(int? strategyId, string? notes)
+  public void UpdateNotes(string notes)
   {
-    if (strategyId.HasValue)
+    Notes = notes ?? throw new ArgumentNullException(nameof(notes));
+  }
+
+  public void UpdateStrategy(int strategyId, Strategy strategy)
+  {
+    StrategyId = strategyId;
+    Strategy = strategy;
+  }
+
+  public void UpdateTags(List<AnalysisTag> tags)
+  {
+    if (tags is null)
     {
-      StrategyId = strategyId.Value;
+      throw new ArgumentException("Tags cannot be null", nameof(tags));
     }
-    if (!string.IsNullOrWhiteSpace(notes))
-    {
-      Notes = notes;
-    }
+    _analysisTags.Clear();
+    _analysisTags.AddRange(tags);
   }
 }

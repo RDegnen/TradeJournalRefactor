@@ -99,6 +99,44 @@ public class TradesController : ControllerBase
       return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
     }
   }
+
+  [HttpPost("analysis/tags")]
+  public async Task<ActionResult<int>> createAnalysisTag(CreateAnalysisTagRequest request)
+  {
+    try
+    {
+      var command = new CreateAnalysisTagCommand(request.Name);
+      var analysisTagId = await _mediator.Send(command);
+      return Ok(analysisTagId);
+    }
+    catch (TradeJournalHttpError ex)
+    {
+      return Problem(detail: ex.Message, statusCode: ex.StatusCode);
+    }
+    catch (Exception ex)
+    {
+      return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
+    }
+  }
+
+  [HttpPost("strategies")]
+  public async Task<ActionResult<int>> createStrategy(CreateStrategyRequest request)
+  {
+    try
+    {
+      var command = new CreateStrategyCommand(request.Name, request.Description);
+      var strategyId = await _mediator.Send(command);
+      return Ok(strategyId);
+    }
+    catch (TradeJournalHttpError ex)
+    {
+      return Problem(detail: ex.Message, statusCode: ex.StatusCode);
+    }
+    catch (Exception ex)
+    {
+      return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
+    }
+  }
 }
 
 public record CreateTradeRequest(
@@ -125,4 +163,13 @@ public record CreateAnalysisRequest(
   int TradeId,
   int? StrategyId,
   string Notes
+);
+
+public record CreateAnalysisTagRequest(
+  string Name
+);
+
+public record CreateStrategyRequest(
+  string Name,
+  string Description
 );

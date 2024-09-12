@@ -11,4 +11,10 @@ public interface ITradeRepository : IRepository<Trade>
   Task<Trade?> GetTradeByIdAsync(int tradeId);
 
   Analysis AddAnalysis(Analysis analysis);
+
+  AnalysisTag AddAnalysisTag(AnalysisTag analysisTag);
+
+  Strategy AddStrategy(Strategy strategy);
+
+  Task<Strategy?> GetStrategyByIdAsync(int strategyId);
 }
