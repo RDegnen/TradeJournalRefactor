@@ -5,6 +5,7 @@ using TradeJournal.Domain.Aggregates.TradeAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
 using TradeJournal.Infrastructure.EntityConfigurations;
+using TradeJournal.Domain.Aggregates.TagAggregate;
 
 namespace TradeJournal.Infrastructure;
 
@@ -12,15 +13,15 @@ public class TradeJournalContext : DbContext, IUnitOfWork
 {
   // Journal Aggregate
   public DbSet<Journal> Journals { get; set; }
-  public DbSet<JournalTag> JournalTags { get; set; }
   public DbSet<Account> Accounts { get; set; }
   // Trade Aggregate
   public DbSet<Trade> Trades { get; set; }
   public DbSet<Analysis> Analysis { get; set; }
-  public DbSet<AnalysisTag> AnalysisTags { get; set; }
   public DbSet<Image> Images { get; set; }
-  public DbSet<ImageTag> ImageTags { get; set; }
   public DbSet<Strategy> Strategies { get; set; }
+  // Tag Aggregate
+  public DbSet<Tag> Tags { get; set; }
+
 
   private readonly IMediator _mediator;
   private IDbContextTransaction _currentTransaction;

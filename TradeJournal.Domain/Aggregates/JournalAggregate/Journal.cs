@@ -1,4 +1,5 @@
 ﻿using TradeJournal.Domain.Aggregates.TradeAggregate;
+using TradeJournal.Domain.Aggregates.TagAggregate;
 using TradeJournal.Domain.SeedWork;
 
 namespace TradeJournal.Domain.Aggregates.JournalAggregate;
@@ -10,26 +11,20 @@ public class Journal : Entity, IAggregateRoot
 
   private readonly List<Trade> _trades;
   public IReadOnlyCollection<Trade> Trades => _trades.AsReadOnly();
-  private readonly List<JournalTag> _journalTags;
-  public IReadOnlyCollection<JournalTag> JournalTags => _journalTags.AsReadOnly();
   public Account? Account { get; private set; }
+  private readonly List<Tag> _tags;
+  public IReadOnlyCollection<Tag> Tags => _tags.AsReadOnly();
 
   public Journal(string name, string description)
   {
     Name = name;
     Description = description;
     _trades = new List<Trade>();
-    _journalTags = new List<JournalTag>();
+    _tags = new List<Tag>();
   }
 
   public void AddAccount(Account account)
   {
     Account = account;
-  }
-
-  // TODO refactor this to update the whole list like in Trade Analysis
-  public void AddTag(JournalTag tag) 
-  {
-    _journalTags.Add(tag);
   }
 }

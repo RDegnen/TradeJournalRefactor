@@ -23,18 +23,8 @@ public class JournalRepository : IJournalRepository
     return _context.Accounts.Add(account).Entity;
   }
 
-  public JournalTag AddTag(JournalTag journalTag) 
-  {
-    return _context.JournalTags.Add(journalTag).Entity;
-  }
-
   public async Task<Journal?> GetJournalByIdAsync(int journalId)
   {
     return await _context.Journals.FindAsync(journalId);
-  }
-
-  public async Task<JournalTag?> GetTagByIdAsync(int tagId)
-  {
-    return await _context.JournalTags.FindAsync(tagId);
   }
 }

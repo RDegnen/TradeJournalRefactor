@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TradeJournal.API.Application.Queries;
 using TradeJournal.Domain.Aggregates.JournalAggregate;
 using TradeJournal.Domain.Aggregates.TradeAggregate;
+using TradeJournal.Domain.Aggregates.TagAggregate;
 using TradeJournal.Infrastructure;
 using TradeJournal.Infrastructure.Idempotency;
 using TradeJournal.Infrastructure.Repositories;
@@ -19,6 +20,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IJournalRepository, JournalRepository>();
 builder.Services.AddScoped<ITradeRepository, TradeRepository>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IRequestManager, RequestManager>();
 builder.Services.AddMediatR(cfg =>
 {

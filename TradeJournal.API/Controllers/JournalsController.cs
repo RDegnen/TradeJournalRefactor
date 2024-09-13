@@ -46,25 +46,6 @@ public class JournalsController : ControllerBase
     }
   }
 
-  [HttpPost("{journalId}/tags/{journalTagId}")]
-  public async Task<ActionResult<JournalDTO>> AddTagToJournal(int journalId, int journalTagId)
-  {
-    try
-    {
-      var command = new AddTagToJournalCommand(journalTagId, journalId);
-      var journal = await _mediator.Send(command);
-      return Ok(journal);
-    }
-    catch (TradeJournalHttpError ex)
-    {
-      return Problem(detail: ex.Message, statusCode: ex.StatusCode);
-    }
-    catch (Exception ex)
-    {
-      return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
-    }
-  }
-
   [HttpPost("account")]
   public async Task<ActionResult<int>> CreateAccount(
     [FromHeader(Name = "x-requestid")] Guid requestId,
@@ -88,25 +69,8 @@ public class JournalsController : ControllerBase
       return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
     }
   }
-
-  [HttpPost("tag")]
-  public async Task<ActionResult<int>> CreateJournalTag(CreateJournalTagRequest request)
-  {
-    try
-    {
-      var command = new CreateJournalTagCommand(request.Name);
-      var journalTagId = await _mediator.Send(command);
-      return Ok(journalTagId);
-    }
-    catch (Exception ex)
-    {
-      return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
-    }
-  }
 }
 
 public record CreateJournalRequest(string Name, string Description);
 
 public record CreateAccountRequest(int JournalId, double Balance);
-
-public record CreateJournalTagRequest(string Name);

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TradeJournal.Infrastructure;
 
@@ -10,9 +11,11 @@ using TradeJournal.Infrastructure;
 namespace TradeJournal.Infrastructure.Migrations
 {
     [DbContext(typeof(TradeJournalContext))]
-    partial class TradeJournalContextModelSnapshot : ModelSnapshot
+    [Migration("20240913015135_RemoveOldTagsAndAddTagAggregate")]
+    partial class RemoveOldTagsAndAddTagAggregate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

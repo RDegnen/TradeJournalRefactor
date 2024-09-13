@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Text;
 using System.Text.Json;
-using TradeJournal.API.Application.DataTranserObjects;
 using TradeJournal.API.Controllers;
 using Xunit.Abstractions;
 
@@ -29,16 +28,6 @@ public class JournalTests : IClassFixture<TradeJournalApiFixture<Program>>
     };
     var response = await _httpClient.PostAsync("api/journals", content);
     var body = await response.Content.ReadAsStringAsync();
-    return (body, response);
-  }
-
-  private async Task<(string, HttpResponseMessage)> createTag(string name)
-  {
-    var createJournalTagRequest = new CreateJournalTagRequest(name);
-    var content = new StringContent(JsonSerializer.Serialize(createJournalTagRequest), UTF8Encoding.UTF8, "application/json");
-    var response = await _httpClient.PostAsync("api/journals/tag", content);
-    var body = await response.Content.ReadAsStringAsync();
-
     return (body, response);
   }
 
@@ -76,47 +65,6 @@ public class JournalTests : IClassFixture<TradeJournalApiFixture<Program>>
     await response.Content.ReadAsStringAsync();
 
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-  }
-
-  [Fact]
-  public async Task AddNewJournalTag()
-  {
-    var createTagResponse = await createTag("Tag");
-    Assert.Equal(HttpStatusCode.OK, createTagResponse.Item2.StatusCode);
-  }
-
-  [Fact]
-  public async Task AddTagToJournal()
-  {
-    var createJournalResponse = await createJournal();
-    var createTagResponse = await createTag("Cool Tag");
-    var journalId = createJournalResponse.Item1;
-    var tagId = createTagResponse.Item1;
-
-    var response = await _httpClient.PostAsync($"api/journals/{journalId}/tags/{tagId}", new StringContent(""));
-    var body = await response.Content.ReadAsStringAsync();
-
-    var options = new JsonSerializerOptions
-    {
-      PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-      PropertyNameCaseInsensitive = true
-    };
-
-    var journal = JsonSerializer.Deserialize<JournalDTO>(body, options)!;
-
-    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    Assert.Single(journal.Tags);
-    Assert.Equal("Cool Tag", journal.Tags[0].Name);
-  }
-
-  [Fact]
-  public async Task AddTagToJournalWithInvalidJournalId()
-  {
-    var createTagResponse = await createTag("Cool Tag");
-    var tagId = createTagResponse.Item1;
-
-    var response = await _httpClient.PostAsync($"api/journals/0/tags/{tagId}", new StringContent(""));
-    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
   }
 
   [Fact]

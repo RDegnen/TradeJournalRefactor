@@ -100,25 +100,6 @@ public class TradesController : ControllerBase
     }
   }
 
-  [HttpPost("analysis/tags")]
-  public async Task<ActionResult<int>> createAnalysisTag(CreateAnalysisTagRequest request)
-  {
-    try
-    {
-      var command = new CreateAnalysisTagCommand(request.Name);
-      var analysisTagId = await _mediator.Send(command);
-      return Ok(analysisTagId);
-    }
-    catch (TradeJournalHttpError ex)
-    {
-      return Problem(detail: ex.Message, statusCode: ex.StatusCode);
-    }
-    catch (Exception ex)
-    {
-      return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
-    }
-  }
-
   [HttpPost("strategies")]
   public async Task<ActionResult<int>> createStrategy(CreateStrategyRequest request)
   {
@@ -163,10 +144,6 @@ public record CreateAnalysisRequest(
   int TradeId,
   int? StrategyId,
   string Notes
-);
-
-public record CreateAnalysisTagRequest(
-  string Name
 );
 
 public record CreateStrategyRequest(

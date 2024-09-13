@@ -1,4 +1,5 @@
 ﻿using TradeJournal.Domain.SeedWork;
+using TradeJournal.Domain.Aggregates.TagAggregate;
 
 namespace TradeJournal.Domain.Aggregates.TradeAggregate;
 
@@ -10,14 +11,14 @@ public class Analysis : Entity
   public Strategy? Strategy { get; private set; }
   public string Notes { get; private set; }
 
-  private readonly List<AnalysisTag> _analysisTags;
-  public IReadOnlyCollection<AnalysisTag> AnalysisTags => _analysisTags.AsReadOnly();
+  private readonly List<Tag> _tags;
+  public IReadOnlyCollection<Tag> Tags => _tags.AsReadOnly();
 
   public Analysis(int tradeId, string notes)
   {
     TradeId = tradeId;
     Notes = notes;
-    _analysisTags = new List<AnalysisTag>();
+    _tags = new List<Tag>();
   }
 
   public void UpdateNotes(string notes)
@@ -29,15 +30,5 @@ public class Analysis : Entity
   {
     StrategyId = strategyId;
     Strategy = strategy;
-  }
-
-  public void UpdateTags(List<AnalysisTag> tags)
-  {
-    if (tags is null)
-    {
-      throw new ArgumentException("Tags cannot be null", nameof(tags));
-    }
-    _analysisTags.Clear();
-    _analysisTags.AddRange(tags);
   }
 }

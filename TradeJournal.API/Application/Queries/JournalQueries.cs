@@ -20,13 +20,4 @@ public class JournalQueries : IJournalQueries
 
     return journal;
   }
-
-  public async Task<JournalTag> GetJournalTagAsync(int id)
-  {
-    var tag = await _context.JournalTags.FindAsync(id);
-
-    if (tag is null) throw new KeyNotFoundException();
-
-    return tag;
-  }
 }
