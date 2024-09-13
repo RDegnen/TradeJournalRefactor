@@ -23,8 +23,8 @@ public class Journal : Entity, IAggregateRoot
     _tags = new List<Tag>();
   }
 
-  public void AddAccount(Account account)
+  public void AddAccount(double balance)
   {
-    Account = account;
+    Account = new Account(balance);
   }
 }

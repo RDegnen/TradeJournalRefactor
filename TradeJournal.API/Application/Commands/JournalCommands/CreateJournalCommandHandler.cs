@@ -1,10 +1,10 @@
 ﻿using MediatR;
+using TradeJournal.API.Application.DataTranserObjects;
 using TradeJournal.Domain.Aggregates.JournalAggregate;
-using TradeJournal.Infrastructure.Idempotency;
 
 namespace TradeJournal.API.Application.Commands.JournalCommands;
 
-public class CreateJournalCommandHandler : IRequestHandler<CreateJournalCommand, int>
+public class CreateJournalCommandHandler : IRequestHandler<CreateJournalCommand, JournalDTO>
 {
   private readonly IJournalRepository _journalRepository;
   private readonly ILogger<CreateJournalCommandHandler> _logger;
@@ -17,7 +17,7 @@ public class CreateJournalCommandHandler : IRequestHandler<CreateJournalCommand,
     _logger = logger;
   }
 
-  public async Task<int> Handle(CreateJournalCommand command, CancellationToken cancellationToken)
+  public async Task<JournalDTO> Handle(CreateJournalCommand command, CancellationToken cancellationToken)
   {
     var journal = new Journal(command.Name, command.Description);
 
@@ -27,27 +27,14 @@ public class CreateJournalCommandHandler : IRequestHandler<CreateJournalCommand,
     var result = await _journalRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
     if (result)
     {
+      var dto = new JournalDTO(Name: entity.Name, Description: entity.Description, Id: entity.Id, Tags: entity.Tags.Select(tag => new TagDTO(tag.Id, tag.Name)).ToList());
       _logger.LogInformation("CreateJournalCommand succeeded");
-      return entity.Id;
+      return dto;
     }
     else
     {
       _logger.LogWarning("CreateJournalCommand failed");
       throw new Exception("Error creating journal");
     }
-  }
-}
-
-public class CreateJournalIdentifiedCommandHandler : IdentifiedCommandHandler<CreateJournalCommand, int>
-{
-  public CreateJournalIdentifiedCommandHandler(
-    IMediator mediator,
-    IRequestManager requestManager,
-    ILogger<IdentifiedCommandHandler<CreateJournalCommand, int>> logger)
-      : base(mediator, requestManager, logger) { }
-
-  protected override int CreateResultForDuplicateRequest()
-  {
-    return 0;
   }
 }

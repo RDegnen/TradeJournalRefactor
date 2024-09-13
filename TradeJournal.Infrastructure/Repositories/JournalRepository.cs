@@ -18,11 +18,6 @@ public class JournalRepository : IJournalRepository
     return _context.Journals.Add(journal).Entity;
   }
 
-  public Account AddAccount(Account account)
-  {
-    return _context.Accounts.Add(account).Entity;
-  }
-
   public async Task<Journal?> GetJournalByIdAsync(int journalId)
   {
     return await _context.Journals.FindAsync(journalId);

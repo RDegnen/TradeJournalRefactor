@@ -6,7 +6,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace TradeJournal.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class RemoveOldTagsAndAddTagAggregate : Migration
+    public partial class RemoveOldTagsAndAddNewTag : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,105 +27,114 @@ namespace TradeJournal.Infrastructure.Migrations
                 name: "ImageTags");
 
             migrationBuilder.AddColumn<int>(
-                name: "AnalysisId",
-                table: "Tags",
-                type: "int",
-                nullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "ImageId",
-                table: "Tags",
-                type: "int",
-                nullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "JournalId",
-                table: "Tags",
-                type: "int",
-                nullable: true);
-
-            migrationBuilder.AddColumn<int>(
                 name: "TagType",
                 table: "Tags",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Tags_AnalysisId",
-                table: "Tags",
-                column: "AnalysisId");
+            migrationBuilder.CreateTable(
+                name: "AnalysisTag",
+                columns: table => new
+                {
+                    AnalysisId = table.Column<int>(type: "int", nullable: false),
+                    TagsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AnalysisTag", x => new { x.AnalysisId, x.TagsId });
+                    table.ForeignKey(
+                        name: "FK_AnalysisTag_Analysis_AnalysisId",
+                        column: x => x.AnalysisId,
+                        principalTable: "Analysis",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AnalysisTag_Tags_TagsId",
+                        column: x => x.TagsId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ImageTag",
+                columns: table => new
+                {
+                    ImagesId = table.Column<int>(type: "int", nullable: false),
+                    TagsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ImageTag", x => new { x.ImagesId, x.TagsId });
+                    table.ForeignKey(
+                        name: "FK_ImageTag_Images_ImagesId",
+                        column: x => x.ImagesId,
+                        principalTable: "Images",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ImageTag_Tags_TagsId",
+                        column: x => x.TagsId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "JournalTag",
+                columns: table => new
+                {
+                    JournalsId = table.Column<int>(type: "int", nullable: false),
+                    TagsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JournalTag", x => new { x.JournalsId, x.TagsId });
+                    table.ForeignKey(
+                        name: "FK_JournalTag_Journals_JournalsId",
+                        column: x => x.JournalsId,
+                        principalTable: "Journals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_JournalTag_Tags_TagsId",
+                        column: x => x.TagsId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_ImageId",
-                table: "Tags",
-                column: "ImageId");
+                name: "IX_AnalysisTag_TagsId",
+                table: "AnalysisTag",
+                column: "TagsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_JournalId",
-                table: "Tags",
-                column: "JournalId");
+                name: "IX_ImageTag_TagsId",
+                table: "ImageTag",
+                column: "TagsId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Tags_Analysis_AnalysisId",
-                table: "Tags",
-                column: "AnalysisId",
-                principalTable: "Analysis",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Tags_Images_ImageId",
-                table: "Tags",
-                column: "ImageId",
-                principalTable: "Images",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Tags_Journals_JournalId",
-                table: "Tags",
-                column: "JournalId",
-                principalTable: "Journals",
-                principalColumn: "Id");
+            migrationBuilder.CreateIndex(
+                name: "IX_JournalTag_TagsId",
+                table: "JournalTag",
+                column: "TagsId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Tags_Analysis_AnalysisId",
-                table: "Tags");
+            migrationBuilder.DropTable(
+                name: "AnalysisTag");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Tags_Images_ImageId",
-                table: "Tags");
+            migrationBuilder.DropTable(
+                name: "ImageTag");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Tags_Journals_JournalId",
-                table: "Tags");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Tags_AnalysisId",
-                table: "Tags");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Tags_ImageId",
-                table: "Tags");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Tags_JournalId",
-                table: "Tags");
-
-            migrationBuilder.DropColumn(
-                name: "AnalysisId",
-                table: "Tags");
-
-            migrationBuilder.DropColumn(
-                name: "ImageId",
-                table: "Tags");
-
-            migrationBuilder.DropColumn(
-                name: "JournalId",
-                table: "Tags");
+            migrationBuilder.DropTable(
+                name: "JournalTag");
 
             migrationBuilder.DropColumn(
                 name: "TagType",

@@ -1,11 +1,12 @@
 ﻿using MediatR;
+using TradeJournal.API.Application.DataTranserObjects;
 using TradeJournal.API.Application.Queries;
 using TradeJournal.Domain.Aggregates.JournalAggregate;
 using TradeJournal.Infrastructure.Idempotency;
 
 namespace TradeJournal.API.Application.Commands.JournalCommands;
 
-public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, int>
+public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, AccountDTO>
 {
   private readonly IJournalRepository _journalRepository;
   private readonly ILogger<CreateAccountCommandHandler> _logger;
@@ -21,40 +22,24 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
     _journalQueries = journalQueries;
   }
 
-  public async Task<int> Handle(CreateAccountCommand command, CancellationToken cancellationToken)
+  public async Task<AccountDTO> Handle(CreateAccountCommand command, CancellationToken cancellationToken)
   {
     var journal = await _journalQueries.GetJournalAsync(command.JournalId);
-    var account = new Account(command.JournalId, command.Balance);
-    journal.AddAccount(account);
+    journal.AddAccount(command.Balance);
 
-    _logger.LogInformation("Adding Account - {@Account}", account);
+    _logger.LogInformation("Adding account with balance - {@Balance}", command.Balance);
 
-    var entity = _journalRepository.AddAccount(account);
     var result = await _journalRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
     if (result)
     {
+      var dto = new AccountDTO(journal.Account.Id, journal.Account.Balance, journal.Account.RealizedPnL);
       _logger.LogInformation("CreateAccountCommand succeeded");
-      return entity.Id;
+      return dto;
     }
     else
     {
       _logger.LogWarning("CreateAccountCommand failed");
       throw new Exception("Error creating Account");
     }
-  }
-}
-
-public class CreateAccountIdentifiedCommandHandler
-  : IdentifiedCommandHandler<CreateAccountCommand, int>
-{
-  public CreateAccountIdentifiedCommandHandler(
-    IMediator mediator,
-    IRequestManager requestManager,
-    ILogger<IdentifiedCommandHandler<CreateAccountCommand, int>> logger)
-      : base(mediator, requestManager, logger) { }
-
-  protected override int CreateResultForDuplicateRequest()
-  {
-    return 0;
   }
 }

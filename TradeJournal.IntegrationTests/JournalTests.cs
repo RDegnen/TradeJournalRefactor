@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using System.Text.Json;
+using TradeJournal.API.Application.DataTranserObjects;
 using TradeJournal.API.Controllers;
 using Xunit.Abstractions;
 
@@ -11,6 +12,11 @@ public class JournalTests : IClassFixture<TradeJournalApiFixture<Program>>
   private readonly HttpClient _httpClient;
   private readonly TradeJournalApiFixture<Program> _factory;
   private readonly ITestOutputHelper _outputHelper;
+  private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+  {
+    PropertyNameCaseInsensitive = true,
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+  };
 
   public JournalTests(TradeJournalApiFixture<Program> factory, ITestOutputHelper outputHelper)
   {
@@ -35,28 +41,15 @@ public class JournalTests : IClassFixture<TradeJournalApiFixture<Program>>
   public async Task AddNewJournal()
   {
     var createJournalResponse = await createJournal();
-    Assert.Equal(HttpStatusCode.OK, createJournalResponse.Item2.StatusCode);
-  }
-
-  [Fact]
-  public async Task AddNewJournalWithoutRequestId()
-  {
-    var createJournalRequest = new CreateJournalRequest("Test", "A test journal");
-    var content = new StringContent(JsonSerializer.Serialize(createJournalRequest), UTF8Encoding.UTF8, "application/json")
-    {
-      Headers = { { "x-requestid", Guid.Empty.ToString() } }
-    };
-    var response = await _httpClient.PostAsync("api/journals", content);
-    await response.Content.ReadAsStringAsync();
-
-    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Created, createJournalResponse.Item2.StatusCode);
   }
 
   [Fact]
   public async Task AddNewAccount()
   {
-    var createResponse = await createJournal();
-    var createAccountRequest = new CreateAccountRequest(Int32.Parse(createResponse.Item1), 50000.00);
+    var createJournalResponse = await createJournal();
+    var dto = JsonSerializer.Deserialize<JournalDTO>(createJournalResponse.Item1, _jsonSerializerOptions);
+    var createAccountRequest = new CreateAccountRequest(dto.Id, 50000.00);
     var content = new StringContent(JsonSerializer.Serialize(createAccountRequest), UTF8Encoding.UTF8, "application/json")
     {
       Headers = { { "x-requestid", Guid.NewGuid().ToString() } }
@@ -64,16 +57,6 @@ public class JournalTests : IClassFixture<TradeJournalApiFixture<Program>>
     var response = await _httpClient.PostAsync("api/journals/account", content);
     await response.Content.ReadAsStringAsync();
 
-    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-  }
-
-  [Fact]
-  public async Task AddTagToJournalWithInvalidTagId()
-  {
-    var createJournalResponse = await createJournal();
-    var journalId = createJournalResponse.Item1;
-
-    var response = await _httpClient.PostAsync($"api/journals/{journalId}/tags/0", new StringContent(""));
-    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
   }
 }

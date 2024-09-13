@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TradeJournal.API.Application;
-using TradeJournal.API.Application.Commands;
 using TradeJournal.API.Application.Commands.JournalCommands;
 using TradeJournal.API.Application.DataTranserObjects;
 
@@ -23,7 +21,7 @@ public class JournalsController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<ActionResult<int>> CreateJournal(
+  public async Task<ActionResult<JournalDTO>> CreateJournal(
     [FromHeader(Name = "x-requestid")] Guid requestId,
     CreateJournalRequest request)
   {
@@ -36,9 +34,8 @@ public class JournalsController : ControllerBase
     try
     {
       var command = new CreateJournalCommand(request.Name, request.Description);
-      var identifiedCommand = new IdentifiedCommand<CreateJournalCommand, int>(command, requestId);
-      var journalId = await _mediator.Send(identifiedCommand);
-      return Ok(journalId);
+      var result = await _mediator.Send(command);
+      return CreatedAtAction(nameof(CreateJournal), new { id = result.Id }, result);
     }
     catch (Exception ex)
     {
@@ -47,7 +44,7 @@ public class JournalsController : ControllerBase
   }
 
   [HttpPost("account")]
-  public async Task<ActionResult<int>> CreateAccount(
+  public async Task<ActionResult<AccountDTO>> CreateAccount(
     [FromHeader(Name = "x-requestid")] Guid requestId,
     CreateAccountRequest request)
   {
@@ -60,9 +57,8 @@ public class JournalsController : ControllerBase
     try
     {
       var command = new CreateAccountCommand(request.JournalId, request.Balance);
-      var identifiedCommand = new IdentifiedCommand<CreateAccountCommand, int>(command, requestId);
-      var accountId = await _mediator.Send(identifiedCommand);
-      return Ok(accountId);
+      var result = await _mediator.Send(command);
+      return CreatedAtAction(nameof(CreateAccount), new { id = result.Id }, result);
     }
     catch (Exception ex)
     {

@@ -19,6 +19,51 @@ namespace TradeJournal.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "8.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("AnalysisTag", b =>
+                {
+                    b.Property<int>("AnalysisId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AnalysisId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("AnalysisTag");
+                });
+
+            modelBuilder.Entity("ImageTag", b =>
+                {
+                    b.Property<int>("ImagesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ImagesId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("ImageTag");
+                });
+
+            modelBuilder.Entity("JournalTag", b =>
+                {
+                    b.Property<int>("JournalsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("JournalsId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("JournalTag");
+                });
+
             modelBuilder.Entity("TradeJournal.Domain.Aggregates.JournalAggregate.Account", b =>
                 {
                     b.Property<int>("Id")
@@ -67,15 +112,6 @@ namespace TradeJournal.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("AnalysisId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ImageId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JournalId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -84,12 +120,6 @@ namespace TradeJournal.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AnalysisId");
-
-                    b.HasIndex("ImageId");
-
-                    b.HasIndex("JournalId");
 
                     b.ToTable("Tags");
                 });
@@ -233,6 +263,51 @@ namespace TradeJournal.Infrastructure.Migrations
                     b.ToTable("requests", (string)null);
                 });
 
+            modelBuilder.Entity("AnalysisTag", b =>
+                {
+                    b.HasOne("TradeJournal.Domain.Aggregates.TradeAggregate.Analysis", null)
+                        .WithMany()
+                        .HasForeignKey("AnalysisId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TradeJournal.Domain.Aggregates.TagAggregate.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ImageTag", b =>
+                {
+                    b.HasOne("TradeJournal.Domain.Aggregates.TradeAggregate.Image", null)
+                        .WithMany()
+                        .HasForeignKey("ImagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TradeJournal.Domain.Aggregates.TagAggregate.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("JournalTag", b =>
+                {
+                    b.HasOne("TradeJournal.Domain.Aggregates.JournalAggregate.Journal", null)
+                        .WithMany()
+                        .HasForeignKey("JournalsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TradeJournal.Domain.Aggregates.TagAggregate.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TradeJournal.Domain.Aggregates.JournalAggregate.Account", b =>
                 {
                     b.HasOne("TradeJournal.Domain.Aggregates.JournalAggregate.Journal", null)
@@ -240,21 +315,6 @@ namespace TradeJournal.Infrastructure.Migrations
                         .HasForeignKey("TradeJournal.Domain.Aggregates.JournalAggregate.Account", "JournalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("TradeJournal.Domain.Aggregates.TagAggregate.Tag", b =>
-                {
-                    b.HasOne("TradeJournal.Domain.Aggregates.TradeAggregate.Analysis", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("AnalysisId");
-
-                    b.HasOne("TradeJournal.Domain.Aggregates.TradeAggregate.Image", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("ImageId");
-
-                    b.HasOne("TradeJournal.Domain.Aggregates.JournalAggregate.Journal", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("JournalId");
                 });
 
             modelBuilder.Entity("TradeJournal.Domain.Aggregates.TradeAggregate.Analysis", b =>
@@ -294,19 +354,7 @@ namespace TradeJournal.Infrastructure.Migrations
                 {
                     b.Navigation("Account");
 
-                    b.Navigation("Tags");
-
                     b.Navigation("Trades");
-                });
-
-            modelBuilder.Entity("TradeJournal.Domain.Aggregates.TradeAggregate.Analysis", b =>
-                {
-                    b.Navigation("Tags");
-                });
-
-            modelBuilder.Entity("TradeJournal.Domain.Aggregates.TradeAggregate.Image", b =>
-                {
-                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("TradeJournal.Domain.Aggregates.TradeAggregate.Strategy", b =>
